@@ -1,0 +1,1496 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Terpadu Administrasi PMI Kecamatan Sumowono</title>
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #f4f6f9;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    /* Header Atas: Logo & Tab Navigasi Tengah */
+    .top-header {
+        height: 60px;
+        background: linear-gradient(135deg, #b71c1c, #d32f2f);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        z-index: 20;
+        flex-shrink: 0;
+    }
+
+    .header-brand {
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .nav-tabs-center {
+        display: flex;
+        gap: 8px;
+        background: rgba(0,0,0,0.15);
+        padding: 4px;
+        border-radius: 8px;
+    }
+
+    .nav-tab-btn {
+        background: transparent;
+        border: none;
+        padding: 8px 16px;
+        font-size: 13px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.85);
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .nav-tab-btn:hover {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+    }
+
+    .nav-tab-btn.active {
+        background: #ffffff;
+        color: #b71c1c;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    .header-spacer {
+        width: 150px;
+    }
+
+    /* Main Workspace Layout */
+    .app-workspace {
+        display: flex;
+        flex: 1;
+        height: calc(100vh - 60px);
+        overflow: hidden;
+    }
+
+    /* Panel Utama: Preview Dokumen A4 Terpusat */
+    .preview-panel {
+        flex: 1;
+        background: #e2e8f0;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        overflow-y: auto;
+        padding: 30px 20px;
+    }
+
+    /* Panel Kanan: Aksi Cetak & Database Cloud */
+    .right-panel {
+        width: 360px;
+        background: #ffffff;
+        border-left: 1px solid #e1e4e8;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        box-shadow: -2px 0 10px rgba(0,0,0,0.02);
+        z-index: 10;
+        flex-shrink: 0;
+    }
+
+    .right-panel-body {
+        padding: 20px;
+        overflow-y: auto;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .section-title {
+        font-size: 12px;
+        font-weight: 700;
+        color: #b71c1c;
+        margin: 10px 0;
+        border-bottom: 2px solid #fee2e2;
+        padding-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .section-title:first-child {
+        margin-top: 0;
+    }
+
+    /* Action Buttons di Panel Kanan */
+    .action-box {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn-action {
+        border: none;
+        padding: 11px 12px;
+        width: 100%;
+        font-size: 13px;
+        font-weight: 700;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.1s;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-save { background: #16a34a; color: white; }
+    .btn-save:hover { background: #15803d; }
+
+    .btn-modal-open { background: #2563eb; color: white; }
+    .btn-modal-open:hover { background: #1d4ed8; }
+
+    .btn-print { background: #1e293b; color: white; }
+    .btn-print.all { background: #b71c1c; }
+
+    .btn-action:hover { opacity: 0.9; }
+    .btn-action:active { transform: scale(0.98); }
+
+    /* List Database Ringkas di Panel Kanan */
+    .db-list-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        overflow-y: auto;
+    }
+
+    .db-card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        transition: border-color 0.2s;
+    }
+
+    .db-card:hover {
+        border-color: #b71c1c;
+    }
+
+    .db-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .db-time {
+        font-size: 10px;
+        font-weight: 700;
+        color: #64748b;
+        background: #e2e8f0;
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+
+    .db-title {
+        font-size: 12px;
+        font-weight: 700;
+        color: #1e293b;
+    }
+
+    .db-sub {
+        font-size: 11px;
+        color: #64748b;
+    }
+
+    .db-actions {
+        display: flex;
+        gap: 6px;
+        margin-top: 6px;
+    }
+
+    .btn-db-load {
+        flex: 1;
+        background: #3b82f6;
+        color: white;
+        border: none;
+        padding: 6px;
+        font-size: 11px;
+        font-weight: 600;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .btn-db-del {
+        background: #ef4444;
+        color: white;
+        border: none;
+        padding: 6px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    /* Modal Box Database Styling */
+    .modal-overlay {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(4px);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 100;
+        padding: 20px;
+    }
+
+    .modal-overlay.active {
+        display: flex;
+    }
+
+    .modal-container {
+        background: #ffffff;
+        width: 100%;
+        max-width: 900px;
+        max-height: 85vh;
+        border-radius: 12px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        animation: modalFadeIn 0.2s ease;
+    }
+
+    @keyframes modalFadeIn {
+        from { opacity: 0; transform: scale(0.96); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-header {
+        padding: 16px 20px;
+        background: linear-gradient(135deg, #b71c1c, #d32f2f);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-title {
+        font-size: 16px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .modal-close-btn {
+        background: rgba(255,255,255,0.2);
+        border: none;
+        color: white;
+        font-size: 18px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+    }
+
+    .modal-close-btn:hover {
+        background: rgba(255,255,255,0.35);
+    }
+
+    .modal-filter-bar {
+        padding: 16px 20px;
+        background: #f8fafc;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        align-items: flex-end;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        flex: 1;
+        min-width: 160px;
+    }
+
+    .filter-group label {
+        font-size: 11px;
+        font-weight: 700;
+        color: #475569;
+        text-transform: uppercase;
+    }
+
+    .filter-group input {
+        padding: 8px 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font-size: 12px;
+        font-family: inherit;
+        outline: none;
+    }
+
+    .filter-group input:focus {
+        border-color: #b71c1c;
+        box-shadow: 0 0 0 2px rgba(183,28,28,0.1);
+    }
+
+    .btn-reset-filter {
+        background: #64748b;
+        color: white;
+        border: none;
+        padding: 8px 14px;
+        font-size: 12px;
+        font-weight: 600;
+        border-radius: 6px;
+        cursor: pointer;
+        height: 33px;
+    }
+
+    .btn-reset-filter:hover {
+        background: #475569;
+    }
+
+    .modal-body {
+        padding: 20px;
+        overflow-y: auto;
+        flex: 1;
+    }
+
+    .modal-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+    }
+
+    .modal-table th, .modal-table td {
+        padding: 10px 12px;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+        vertical-align: middle;
+    }
+
+    .modal-table th {
+        background: #f1f5f9;
+        color: #334155;
+        font-weight: 700;
+        position: sticky;
+        top: 0;
+        z-index: 5;
+    }
+
+    .modal-table tr:hover td {
+        background-color: #f8fafc;
+    }
+
+    .badge-date {
+        background: #fee2e2;
+        color: #991b1b;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 11px;
+    }
+
+    .document-view { display: none; }
+    .document-view.active { display: block; }
+
+    @page {
+        size: A4 portrait;
+        margin: 0;
+    }
+
+    /* Styling Tampilan Editable & Date Picker Inline */
+    [contenteditable="true"] {
+        outline: 1px dashed #cbd5e1;
+        padding: 1px 3px;
+        border-radius: 2px;
+        transition: background 0.2s, outline 0.2s;
+    }
+
+    [contenteditable="true"]:hover {
+        background-color: #fef2f2;
+        outline: 1px dashed #b71c1c;
+    }
+
+    [contenteditable="true"]:focus {
+        background-color: #fff;
+        outline: 2px solid #b71c1c;
+    }
+
+    .inline-date-picker {
+        border: 1px dashed #cbd5e1;
+        background: transparent;
+        font-family: inherit;
+        font-size: inherit;
+        padding: 1px 4px;
+        border-radius: 3px;
+        color: inherit;
+        cursor: pointer;
+    }
+
+    .inline-date-picker:hover {
+        background-color: #fef2f2;
+        border-color: #b71c1c;
+    }
+
+    .inline-date-picker:focus {
+        outline: 2px solid #b71c1c;
+        background-color: #fff;
+    }
+
+    /* Tombol Aksi Poin Laporan Hasil Perjalanan */
+    .btn-del-point {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #ef4444;
+        color: white;
+        border: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        font-size: 10px;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.2s;
+        margin-left: 8px;
+        vertical-align: middle;
+    }
+
+    .lap-row:hover .btn-del-point {
+        opacity: 1;
+    }
+
+    .btn-add-point {
+        background: #2563eb;
+        color: white;
+        border: none;
+        padding: 4px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 6px;
+        transition: background 0.2s;
+    }
+
+    .btn-add-point:hover {
+        background: #1d4ed8;
+    }
+
+    /* Layout Surat Tugas */
+    .page {
+        position: relative;
+        width: 210mm;
+        min-height: 297mm;
+        max-height: 297mm;
+        margin: 0 auto;
+        background: #fff;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        color: #000;
+        font-size: 11.5pt;
+        flex-shrink: 0;
+        margin-bottom: 20mm;
+    }
+
+    .letterhead {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 210mm;
+        height: auto;
+        object-fit: fill;
+    }
+
+    .content-container {
+        padding: 20mm 15mm 15mm 25mm;
+    }
+
+    .title-area {
+        text-align: center;
+        margin-top: 5mm;
+    }
+
+    .title {
+        margin: 0;
+        font-size: 12pt;
+        font-weight: bold;
+        text-decoration: underline;
+        line-height: 1.5;
+    }
+
+    .number {
+        margin-top: 0;
+        font-size: 11.5pt;
+        line-height: 1.5;
+    }
+
+    .top-table, .bottom-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+    }
+
+    .top-table { margin-top: 11.8mm; }
+    .bottom-table { margin-top: 7.7mm; }
+
+    .top-table col:nth-child(1), .bottom-table col:nth-child(1) { width: 1.65in; }
+    .top-table col:nth-child(2), .bottom-table col:nth-child(2) { width: 0.1972in; }
+    .top-table col:nth-child(3), .bottom-table col:nth-child(3) { width: auto; }
+
+    .top-table td, .bottom-table td {
+        border: none;
+        padding: 0;
+        height: 7.1mm;
+        vertical-align: middle;
+        font-size: 11.5pt;
+        line-height: 1.15;
+    }
+
+    .person-table {
+        width: 121mm;
+        margin-left: 34.5mm;
+        margin-top: 5.2mm;
+        border-collapse: collapse;
+        table-layout: fixed;
+        font-size: 11.5pt;
+    }
+
+    .person-table th, .person-table td {
+        border: 1px solid #000;
+        padding: 1.0mm 1.8mm;
+        height: 7.6mm;
+        text-align: left;
+        vertical-align: middle;
+        line-height: 1.05;
+    }
+
+    .person-table th { font-weight: bold; }
+    .person-table col:nth-child(1) { width: 12.5mm; }
+    .person-table col:nth-child(2) { width: 57mm; }
+    .person-table col:nth-child(3) { width: 51.5mm; }
+
+    .instruction {
+        margin-top: 11.5mm;
+        margin-left: -2.1mm;
+        width: 100%;
+        font-size: 11.5pt;
+        line-height: 1.35;
+    }
+
+    .signature {
+        width: 50%;
+        margin-left: 50%;
+        text-align: center;
+        margin-top: 2.3mm;
+        font-size: 11.5pt;
+        line-height: 1.65;
+    }
+
+    .signature .date { margin-bottom: 0; }
+    .signature .organization { font-weight: bold; }
+    .signature .name {
+        margin-top: 17.8mm;
+        font-weight: bold;
+        text-decoration: underline;
+    }
+
+    .attendance {
+        position: absolute;
+        left: 25.4mm;
+        right: 25.4mm;
+        bottom: 28mm;
+        font-size: 11.5pt;
+        line-height: 1.7;
+        white-space: nowrap;
+    }
+
+    .footer {
+        position: absolute;
+        left: 5.5mm;
+        bottom: 5.5mm;
+        font-size: 10.5pt;
+        line-height: 1.3;
+    }
+
+    .footer .red { color: red; }
+    .footer .email { color: #0000ee; text-decoration: underline; }
+
+    /* Layout Universal Spreadsheet / Laporan & Kwitansi */
+    .page-sheet {
+        background: #fff;
+        margin: 0 auto;
+        padding: 10mm;
+        box-shadow: 0 1px 5px rgba(0,0,0,.15);
+        overflow: auto;
+        width: 210mm;
+        min-height: 297mm;
+        margin-bottom: 20mm;
+    }
+
+    .excel-sheet {
+        border-collapse: collapse;
+        table-layout: fixed;
+        margin: 0 auto;
+        width: max-content;
+        min-width: 100%;
+        font-size: 12pt;
+    }
+
+    .excel-sheet td {
+        height: 18px;
+        line-height: 1.15;
+        overflow-wrap: break-word;
+    }
+
+    /* Styling Tabel Kwitansi BBM */
+    .bbm-container {
+        width: 185mm;
+        margin: 0 auto;
+        background: #fff;
+        border: 2px solid #000;
+        padding: 5mm;
+        font-family: Arial, sans-serif;
+        font-size: 12pt;
+    }
+
+    .bbm-header { font-weight: bold; margin-bottom: 15px; }
+    .bbm-title-box { text-align: center; margin-bottom: 20px; }
+    .bbm-title { font-weight: bold; text-decoration: underline; font-size: 13pt; margin-bottom: 4px; }
+    .bbm-row { display: flex; margin-bottom: 8px; }
+    .bbm-label { width: 170px; }
+    .bbm-sep { width: 20px; text-align: center; }
+    .bbm-val { flex: 1; }
+
+    .bbm-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+        margin-bottom: 20px;
+    }
+
+    .bbm-table th, .bbm-table td {
+        border: 1px solid #000;
+        padding: 6px 8px;
+        vertical-align: middle;
+    }
+
+    .bbm-table th { text-align: center; font-weight: normal; }
+    .bbm-footer-date { margin-bottom: 25px; }
+
+    .bbm-sign-container {
+        display: flex;
+        justify-content: space-between;
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .bbm-sign-col { flex: 1; }
+    .bbm-sign-space { height: 55px; }
+    .bbm-sign-name { font-weight: bold; }
+
+    /* Print Styling Pintar & Konsisten */
+    @media print {
+        body { background: #fff; display: block; height: auto; overflow: visible; }
+        .top-header, .right-panel, .modal-overlay, .btn-del-point, .btn-add-point { display: none !important; }
+        .app-workspace { height: auto !important; overflow: visible !important; display: block !important; }
+        .preview-panel { display: block !important; padding: 0 !important; background: #fff !important; overflow: visible !important; }
+        
+        [contenteditable="true"] { outline: none !important; background: transparent !important; }
+        .inline-date-picker { border: none !important; background: transparent !important; appearance: none; -webkit-appearance: none; }
+
+        body.print-single .document-view { display: none !important; }
+        body.print-single .document-view.active { display: block !important; }
+        
+        body.print-all .document-view { display: block !important; page-break-after: always; break-after: page; }
+        
+        .page, .page-sheet, .bbm-container { margin: 0; box-shadow: none; width: 210mm; min-height: 297mm; overflow: visible; position: relative; }
+        @page { size: A4 portrait; margin: 0; }
+    }
+</style>
+</head>
+<body>
+
+    <!-- Header Atas dengan Navigasi Tab Tengah -->
+    <header class="top-header">
+        <div class="header-brand">
+            <span>🔴</span> PMI Kec. Sumowono
+        </div>
+
+        <nav class="nav-tabs-center">
+            <button class="nav-tab-btn active" onclick="switchTab('doc-surtug', event)">Surat Tugas</button>
+            <button class="nav-tab-btn" onclick="switchTab('doc-laporan', event)">Laporan</button>
+            <button class="nav-tab-btn" onclick="switchTab('doc-bbm', event)">Kwitansi BBM</button>
+        </nav>
+
+        <div class="header-spacer"></div>
+    </header>
+
+    <!-- Main Workspace -->
+    <div class="app-workspace">
+
+        <!-- Panel Utama: Preview Dokumen -->
+        <main class="preview-panel">
+            
+            <!-- View 1: Surat Tugas (Editing Inline Lengkap) -->
+            <div id="doc-surtug" class="document-view active">
+                <div class="page">
+                    <img class="letterhead" src="koppmi.jpg" alt="Kop surat PMI">
+                    <div class="content-container">
+                        <div class="title-area">
+                            <div class="title">SURAT TUGAS</div>
+                            <div class="number">Nomor : <span id="prev-no-surat" contenteditable="true" oninput="syncFromInline()">006/PB/IX/2025</span></div>
+                        </div>
+
+                        <table class="top-table">
+                            <colgroup><col><col><col></colgroup>
+                            <tr><td>Dasar</td><td>:</td><td><span id="prev-dasar" contenteditable="true" oninput="syncFromInline()">RAB PMI Kecamatan Sumowono Tahun 2025</span></td></tr>
+                            <tr><td>Nomor</td><td>:</td><td><span id="prev-no-dasar" contenteditable="true" oninput="syncFromInline()">-</span></td></tr>
+                            <tr><td>Tanggal</td><td>:</td><td><input type="date" id="prev-tanggal-surat-picker" class="inline-date-picker" value="2025-09-28" onchange="onMainDateChangeFromInline()"></td></tr>
+                            <tr><td>Tentang</td><td>:</td><td><span id="prev-tentang" contenteditable="true" oninput="syncFromInline()">Biaya Perjalanan Dinas</span></td></tr>
+                            <tr><td>Ditugaskan kepada</td><td>:</td><td></td></tr>
+                        </table>
+
+                        <table class="person-table">
+                            <colgroup><col><col><col></colgroup>
+                            <thead>
+                                <tr><th>No</th><th>Nama</th><th>Jabatan</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>1.</td><td><span id="prev-person-1" contenteditable="true" oninput="syncFromInline()">Utomo Gunarto, S. P.</span></td><td contenteditable="true">Ketua</td></tr>
+                                <tr><td>2.</td><td contenteditable="true">Sri Handayani, S.E.</td><td contenteditable="true">Bendahara</td></tr>
+                                <tr><td>3.</td><td contenteditable="true">Sonny Endrawan, S.Kom.</td><td contenteditable="true">Sekretaris</td></tr>
+                            </tbody>
+                        </table>
+
+                        <table class="bottom-table">
+                            <colgroup><col><col><col></colgroup>
+                            <tr><td>Tugas</td><td>:</td><td><span id="prev-tugas" contenteditable="true" oninput="syncFromInline()">Kegiatan HUT PMI ke 80 Tahun 2025</span></td></tr>
+                            <tr><td>Tempat</td><td>:</td><td><span id="prev-tempat" contenteditable="true" oninput="onTempatChangeFromInline()">Lapangan Desa Kesongo Kec. Tuntang</span></td></tr>
+                            <tr><td>Berangkat Tanggal</td><td>:</td><td><input type="date" id="prev-tgl-berangkat-picker" class="inline-date-picker" value="2025-09-28" onchange="onBerangkatChangeFromInline()"></td></tr>
+                            <tr><td>Kembali Tanggal</td><td>:</td><td><input type="date" id="prev-tgl-kembali-picker" class="inline-date-picker" value="2025-09-28" onchange="onKembaliChangeFromInline()"></td></tr>
+                            <tr><td>Transportasi</td><td>:</td><td><span id="prev-transport" contenteditable="true" oninput="syncFromInline()">Darat</span></td></tr>
+                        </table>
+
+                        <div class="instruction">
+                            Dimohon semua pihak yang terkait untuk membantu agar yang bersangkutan dapat<br>
+                            melaksanakan tugasnya
+                        </div>
+
+                        <div class="signature">
+                            <div class="date">Sumowono, <span id="prev-asman-tgl">28 September 2025</span></div>
+                            <div>Pengurus</div>
+                            <div class="organization">PALANG MERAH INDONESIA</div>
+                            <div>Kecamatan Sumowono</div>
+                            <div>Ketua,</div>
+                            <div class="name" id="prev-nama-ketua" contenteditable="true" oninput="syncFromInline()">UTOMO GUNARTO, S.P</div>
+                        </div>
+
+                        <div class="attendance">
+                            <div>Tiba di <span id="prev-tiba-di" contenteditable="true" oninput="syncFromInline()">Lapangan Desa Kesongo Kec. Tuntang</span> tgl. <span id="prev-tgl-tiba">28 September 2025</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(_________)</div>
+                            <div>Kembali dari <span id="prev-kembali-dari" contenteditable="true" oninput="syncFromInline()">Lapangan Desa Kesongo Kec. Tuntang</span> tgl. <span id="prev-tgl-tiba-kembali">28 September 2025</span> (_________)</div>
+                        </div>
+
+                        <div class="footer">
+                            <div class="red">PMI Kecamatan Sumowono</div>
+                            <div>Jl. Jendral Sudirman No.12 Sumowono 50661</div>
+                            <div>Telp./Fax : (0298) 711061</div>
+                            <div>Email : <span class="email">sumowonokecamatan@yahoo.com</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View 2: Laporan Hasil Perjalanan (Daftar Poin Hasil Perjalanan Dinamis) -->
+            <div id="doc-laporan" class="document-view">
+                <div class="page-sheet">
+                    <table class="excel-sheet">
+                        <colgroup><col style="width:33px"><col style="width:24px"><col style="width:100px"><col style="width:20px"><col style="width:68px"><col style="width:64px"><col style="width:140px"><col style="width:20px"><col style="width:99px"><col style="width:141px"></colgroup>
+                        <tbody id="lap-sheet-tbody">
+                            <tr style="height:23px;"><td colspan="9" style="font-family:'Arial';font-size:14.0pt;font-weight:bold;text-decoration:underline;text-align:center;vertical-align:center;padding:2px;">LAPORAN  HASIL  PERJALANAN</td><td></td></tr>
+                            <tr><td colspan="10" style="height:20px;"></td></tr>
+                            <tr><td>1</td><td>N A M A</td><td></td><td>:</td><td colspan="3" id="out-lap-nama">Utomo Gunarto, S. P.</td><td colspan="3"></td></tr>
+                            <tr><td>2</td><td>TANGGAL</td><td></td><td>:</td><td colspan="3" id="out-lap-tgl">28 September 2025</td><td colspan="3"></td></tr>
+                            <tr><td>3</td><td>TUJUAN</td><td></td><td>:</td><td colspan="5" id="out-lap-tujuan" style="white-space:normal;">Lapangan Desa Kesongo Kec. Tuntang</td><td></td></tr>
+                            <tr style="height:46px;"><td>4</td><td>KEPERLUAN</td><td></td><td>:</td><td colspan="5" id="out-lap-keperluan" style="white-space:normal;">Kegiatan HUT PMI ke 80 Tahun 2025</td><td></td></tr>
+                            <tr><td>5</td><td colspan="4">HASIL PERJALANAN DINAS</td><td colspan="5"></td></tr>
+                            <tr><td colspan="10" style="height:10px;"></td></tr>
+                            <tr style="height:24px;"><td></td><td colspan="8" style="white-space:normal;">Tiba di <span id="out-lap-tiba-di">Lapangan Desa Kesongo Kec. Tuntang</span></td><td></td></tr>
+                            
+                            <!-- Container Poin-Poin Hasil Perjalanan Dinamis -->
+                            <!-- Poin 1 -->
+                            <tr class="lap-row" style="height:27px;">
+                                <td></td>
+                                <td class="lap-num" style="text-align:center;">1.</td>
+                                <td colspan="8" style="white-space:normal;">
+                                    <span class="lap-text" contenteditable="true">Apel bersama relawan PMI se Kabupaten Semarang</span>
+                                    <button class="btn-del-point" onclick="removeReportPoint(this)" title="Hapus poin ini">✕</button>
+                                </td>
+                            </tr>
+                            <!-- Poin 2 -->
+                            <tr class="lap-row" style="height:45px;">
+                                <td></td>
+                                <td class="lap-num" style="text-align:center;">2.</td>
+                                <td colspan="8" style="white-space:normal;">
+                                    <span class="lap-text" contenteditable="true">Kegiatan Donor Darah dan Cek Kesehatan Gratis</span>
+                                    <button class="btn-del-point" onclick="removeReportPoint(this)" title="Hapus poin ini">✕</button>
+                                </td>
+                            </tr>
+                            <!-- Poin 3 -->
+                            <tr class="lap-row" style="height:26px;">
+                                <td></td>
+                                <td class="lap-num" style="text-align:center;">3.</td>
+                                <td colspan="8" style="white-space:normal;">
+                                    <span class="lap-text" contenteditable="true">Bakti Sosial Bersih Sungai dan Tanam Pohon</span>
+                                    <button class="btn-del-point" onclick="removeReportPoint(this)" title="Hapus poin ini">✕</button>
+                                </td>
+                            </tr>
+                            <!-- Poin 4 -->
+                            <tr class="lap-row" style="height:42px;">
+                                <td></td>
+                                <td class="lap-num" style="text-align:center;">4.</td>
+                                <td colspan="8" style="white-space:normal;">
+                                    <span class="lap-text" contenteditable="true">Droping air bersih dan pembagian beras untuk warga kurang mampu</span>
+                                    <button class="btn-del-point" onclick="removeReportPoint(this)" title="Hapus poin ini">✕</button>
+                                </td>
+                            </tr>
+
+                            <!-- Baris Tambah Poin -->
+                            <tr id="lap-add-row">
+                                <td></td>
+                                <td></td>
+                                <td colspan="8">
+                                    <button class="btn-add-point" onclick="addReportPoint()">+ Tambah Poin Hasil Perjalanan</button>
+                                </td>
+                            </tr>
+
+                            <tr style="height:55px;"><td></td><td></td><td colspan="8" style="white-space:normal;">Demikian laporan perjalanan Dinas yang dapat kami laporkan.</td></tr>
+                            <tr style="height:40px;"><td colspan="10"></td></tr>
+                            <tr><td colspan="6"></td><td rowspan="2" colspan="4" style="text-align:center;">Pelaksana</td></tr>
+                            <tr style="height:30px;"><td colspan="10"></td></tr>
+                            <tr style="height:20px;"><td colspan="6"></td><td colspan="4" style="font-weight:bold;text-decoration:underline;text-align:center;padding-top:55px" id="out-lap-nama-ttd">Utomo Gunarto, S. P.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- View 3: Kwitansi BBM -->
+            <div id="doc-bbm" class="document-view">
+                <div class="page-sheet" style="justify-content: center; align-items: center;">
+                    <div class="bbm-container">
+                        <div class="bbm-header">PMI Kecamatan Sumowono</div>
+                        
+                        <div class="bbm-title-box">
+                            <div class="bbm-title">KWITANSI BBM</div>
+                            <div id="out-bbm-nomor">Nomor : 006/PB/IX/2025</div>
+                        </div>
+
+                        <div class="bbm-row">
+                            <div class="bbm-label">Sudah terima dari</div>
+                            <div class="bbm-sep">:</div>
+                            <div class="bbm-val">Bendahara PMI Kec Sumowono</div>
+                        </div>
+                        <div class="bbm-row">
+                            <div class="bbm-label">Uang sebesar</div>
+                            <div class="bbm-sep">:</div>
+                            <div class="bbm-val">Rp &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="out-bbm-nominal" contenteditable="true" oninput="onBbmNominalInlineEdit(event)">100.000</span></div>
+                        </div>
+                        <div class="bbm-row" style="margin-bottom: 25px;">
+                            <div class="bbm-label">Guna Pembayaran</div>
+                            <div class="bbm-sep">:</div>
+                            <div class="bbm-val">Biaya BBM Sesuai dengan SPD terlampir.</div>
+                        </div>
+
+                        <table class="bbm-table">
+                            <colgroup>
+                                <col style="width: 50px;">
+                                <col style="width: auto;">
+                                <col style="width: 120px;">
+                                <col style="width: 100px;">
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" style="vertical-align: middle;">No</th>
+                                    <th rowspan="2" style="vertical-align: middle;">Uraian Rincian Biaya</th>
+                                    <th>jumlah</th>
+                                    <th>Keterangan</th>
+                                </tr>
+                                <tr>
+                                    <th>3</th>
+                                    <th>4</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="text-align: center;">1</td>
+                                    <td>Uang BBM</td>
+                                    <td style="text-align: right; padding-right: 15px;" id="out-bbm-nominal-2">100.000</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td style="height: 35px;"></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="text-align: center; font-weight: bold;">Jumlah</td>
+                                    <td style="text-align: right; padding-right: 15px; font-weight: bold;" id="out-bbm-nominal-sum">100.000</td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="bbm-footer-date">
+                            Sumowono, &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="out-bbm-tgl">28 September 2025</span>
+                        </div>
+
+                        <div class="bbm-sign-container">
+                            <div class="bbm-sign-col">
+                                <div>Mengetahui</div>
+                                <div>Ketua PMI Kec. Sumowono</div>
+                                <div class="bbm-sign-space"></div>
+                                <div class="bbm-sign-name" id="out-bbm-nama-ketua">UTOMO GUNARTO, S. P.</div>
+                                <div>NIP 19690203 199803 1 008</div>
+                            </div>
+                            <div class="bbm-sign-col">
+                                <div>Yang membayar</div>
+                                <div>Bendahara PMI</div>
+                                <div class="bbm-sign-space"></div>
+                                <div class="bbm-sign-name">Sri Handayani, SE</div>
+                                <div>NIP 19810510 201502 2 001</div>
+                            </div>
+                            <div class="bbm-sign-col">
+                                <div>Yang menerima</div>
+                                <div class="bbm-sign-space" style="height: 72px;"></div>
+                                <div class="bbm-sign-name" id="out-bbm-nama-penerima">Utomo Gunarto, S. P.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Panel Kanan: Tombol Aksi & Database Ringkas Firestore -->
+        <aside class="right-panel">
+            <div class="right-panel-body">
+                <div class="section-title">Aksi Dokumen</div>
+                <div class="action-box">
+                    <button class="btn-action btn-save" onclick="saveToFirestore()">☁️ Simpan ke Firestore</button>
+                    <button class="btn-action btn-modal-open" onclick="openDatabaseModal()">🔍 Cari Database Dokumen</button>
+                    <button class="btn-action btn-print" onclick="printActiveDocument()">🖨️ Cetak Dokumen Aktif Saja</button>
+                    <button class="btn-action btn-print all" onclick="printAllDocuments()">📑 Cetak Semua Dokumen (3 Sekaligus)</button>
+                </div>
+
+                <div class="section-title">Database Cloud Terbaru</div>
+                <div id="db-list" class="db-list-container">
+                    <div style="font-size:12px; color:#94a3b8; text-align:center; padding:20px;">Menghubungkan ke Firestore...</div>
+                </div>
+            </div>
+        </aside>
+
+    </div>
+
+    <!-- MODAL BOX: DATABASE LENGKAP FIRESTORE & SEARCH FITUR -->
+    <div id="db-modal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <div class="modal-title">🔥 Cloud Database Arsip Dokumen Perjalanan Dinas</div>
+                <button class="modal-close-btn" onclick="closeDatabaseModal()">✕</button>
+            </div>
+
+            <!-- Filter Bar Modal -->
+            <div class="modal-filter-bar">
+                <div class="filter-group" style="flex:2;">
+                    <label>Kata Kunci Pencarian</label>
+                    <input type="text" id="filter-keyword" placeholder="Cari No. Surat, Nama, Tempat, Tugas..." oninput="filterModalDatabase()">
+                </div>
+                <div class="filter-group">
+                    <label>Tanggal Awal</label>
+                    <input type="date" id="filter-start-date" onchange="filterModalDatabase()">
+                </div>
+                <div class="filter-group">
+                    <label>Tanggal Akhir</label>
+                    <input type="date" id="filter-end-date" onchange="filterModalDatabase()">
+                </div>
+                <button class="btn-reset-filter" onclick="resetModalFilters()">Reset Filter</button>
+            </div>
+
+            <!-- Body Modal dengan Tabel Data -->
+            <div class="modal-body">
+                <table class="modal-table">
+                    <thead>
+                        <tr>
+                            <th>No. Surat</th>
+                            <th>Tanggal Doc</th>
+                            <th>Pelaksana / Ketua</th>
+                            <th>Tempat / Tujuan</th>
+                            <th>Keperluan / Tugas</th>
+                            <th>Tgl Simpan</th>
+                            <th style="text-align: center;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modal-db-tbody">
+                        <tr><td colspan="7" style="text-align:center; padding:30px; color:#94a3b8;">Memuat data dari cloud...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT FIREBASE SDK (v10 JS MODULES) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            deleteDoc, 
+            doc, 
+            onSnapshot, 
+            query, 
+            orderBy, 
+            serverTimestamp 
+        } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        // Konfigurasi Project Firebase Anda
+        const firebaseConfig = {
+            apiKey: "AIzaSyAOwoEKr0HNLe64vRvEfGxzd2uzHQlAIa8",
+            authDomain: "sppd-pmi.firebaseapp.com",
+            projectId: "sppd-pmi",
+            storageBucket: "sppd-pmi.firebasestorage.app",
+            messagingSenderId: "711297854481",
+            appId: "1:711297854481:web:926846023c083aa8f455b0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const docsCollection = collection(db, "dokumen_pmi");
+
+        let cachedDocuments = [];
+
+        // 1. Simpan Dokumen ke Firestore
+        window.saveToFirestore = async function() {
+            try {
+                const now = new Date();
+                const timestampFormatted = now.toLocaleDateString('id-ID') + ' ' + now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                const cleanBbmDigits = document.getElementById('out-bbm-nominal').innerText.replace(/[^0-9]/g, '');
+
+                // Ambil daftar poin hasil perjalanan dinas secara dinamis
+                const reportPoints = [];
+                document.querySelectorAll('.lap-text').forEach(el => {
+                    reportPoints.push(el.innerText);
+                });
+
+                const docData = {
+                    nama: document.getElementById('prev-person-1').innerText,
+                    tanggal: document.getElementById('prev-tanggal-surat-picker').value,
+                    tempat: document.getElementById('prev-tempat').innerText,
+                    keperluan: document.getElementById('prev-tugas').innerText,
+                    noSurat: document.getElementById('prev-no-surat').innerText,
+                    dasar: document.getElementById('prev-dasar').innerText,
+                    noDasar: document.getElementById('prev-no-dasar').innerText,
+                    tentang: document.getElementById('prev-tentang').innerText,
+                    tglBerangkat: document.getElementById('prev-tgl-berangkat-picker').value,
+                    tglKembali: document.getElementById('prev-tgl-kembali-picker').value,
+                    transport: document.getElementById('prev-transport').innerText,
+                    bbmNominal: cleanBbmDigits,
+                    reportPoints: reportPoints,
+                    createdAt: serverTimestamp(),
+                    timestampFormatted: timestampFormatted
+                };
+
+                await addDoc(docsCollection, docData);
+                alert('Dokumen berhasil disimpan ke Firestore Cloud Database!');
+            } catch (err) {
+                console.error("Error Firestore Save:", err);
+                alert("Gagal menyimpan dokumen ke Firestore: " + err.message);
+            }
+        };
+
+        // 2. Real-time Listener Dokumen dari Firestore
+        const q = query(docsCollection, orderBy("createdAt", "desc"));
+        onSnapshot(q, (snapshot) => {
+            cachedDocuments = snapshot.docs.map(docSnap => ({
+                id: docSnap.id,
+                ...docSnap.data()
+            }));
+
+            renderRightPanelDb();
+            if (document.getElementById('db-modal').classList.contains('active')) {
+                filterModalDatabase();
+            }
+        }, (err) => {
+            console.error("Firestore Listen Error:", err);
+            document.getElementById('db-list').innerHTML = '<div style="font-size:12px; color:#ef4444; text-align:center; padding:20px;">Gagal memuat data Firestore. Periksa konfigurasi SDK.</div>';
+        });
+
+        // 3. Render Ringkas Panel Kanan
+        function renderRightPanelDb() {
+            const container = document.getElementById('db-list');
+
+            if (cachedDocuments.length === 0) {
+                container.innerHTML = '<div style="font-size:12px; color:#94a3b8; text-align:center; padding:20px;">Belum ada dokumen tersimpan di Cloud</div>';
+                return;
+            }
+
+            container.innerHTML = cachedDocuments.slice(0, 5).map(item => `
+                <div class="db-card">
+                    <div class="db-card-header">
+                        <div class="db-title">No: ${item.noSurat || '-'}</div>
+                        <div class="db-time">🔥 ${item.timestampFormatted || '-'}</div>
+                    </div>
+                    <div class="db-sub">👤 ${item.nama}</div>
+                    <div class="db-sub">📍 ${item.tempat}</div>
+                    <div class="db-actions">
+                        <button class="btn-db-load" onclick="loadFromFirestore('${item.id}')">Muat Data</button>
+                        <button class="btn-db-del" onclick="deleteFromFirestore('${item.id}')">Hapus</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 4. Muat Data Firestore ke Preview
+        window.loadFromFirestore = function(id) {
+            const item = cachedDocuments.find(d => d.id === id);
+            if (!item) return;
+
+            document.getElementById('prev-person-1').innerText = item.nama || '';
+            document.getElementById('prev-tanggal-surat-picker').value = item.tanggal || '';
+            document.getElementById('prev-tempat').innerText = item.tempat || '';
+            document.getElementById('prev-tugas').innerText = item.keperluan || '';
+            document.getElementById('prev-no-surat').innerText = item.noSurat || '';
+            document.getElementById('prev-dasar').innerText = item.dasar || '';
+            document.getElementById('prev-no-dasar').innerText = item.noDasar || '';
+            document.getElementById('prev-tentang').innerText = item.tentang || '';
+            document.getElementById('prev-tgl-berangkat-picker').value = item.tglBerangkat || '';
+            document.getElementById('prev-tgl-kembali-picker').value = item.tglKembali || '';
+            document.getElementById('prev-transport').innerText = item.transport || '';
+
+            let formattedNominal = window.formatRupiah(item.bbmNominal || '100000');
+            document.getElementById('out-bbm-nominal').innerText = formattedNominal;
+            document.getElementById('out-bbm-nominal-2').innerText = formattedNominal;
+            document.getElementById('out-bbm-nominal-sum').innerText = formattedNominal;
+
+            // Muat poin-poin hasil perjalanan jika tersedia
+            if (item.reportPoints && Array.isArray(item.reportPoints)) {
+                window.renderReportPoints(item.reportPoints);
+            }
+
+            window.syncFromInline();
+            window.closeDatabaseModal();
+            alert(`Dokumen No. ${item.noSurat} berhasil dimuat dari Firestore!`);
+        };
+
+        // 5. Hapus Dokumen Firestore
+        window.deleteFromFirestore = async function(id) {
+            if (!confirm('Apakah Anda yakin ingin menghapus data dokumen ini dari Firestore Cloud?')) return;
+            try {
+                await deleteDoc(doc(db, "dokumen_pmi", id));
+            } catch (err) {
+                console.error("Error Delete Firestore:", err);
+                alert("Gagal menghapus dokumen: " + err.message);
+            }
+        };
+
+        // 6. Filter & Search di Modal Box
+        window.filterModalDatabase = function() {
+            const keyword = document.getElementById('filter-keyword').value.toLowerCase();
+            const startDate = document.getElementById('filter-start-date').value;
+            const endDate = document.getElementById('filter-end-date').value;
+            const tbody = document.getElementById('modal-db-tbody');
+
+            let filtered = cachedDocuments.filter(item => {
+                const matchesKeyword = !keyword || 
+                    (item.noSurat && item.noSurat.toLowerCase().includes(keyword)) ||
+                    (item.nama && item.nama.toLowerCase().includes(keyword)) ||
+                    (item.tempat && item.tempat.toLowerCase().includes(keyword)) ||
+                    (item.keperluan && item.keperluan.toLowerCase().includes(keyword)) ||
+                    (item.dasar && item.dasar.toLowerCase().includes(keyword));
+
+                let matchesDateRange = true;
+                if (startDate && item.tanggal < startDate) matchesDateRange = false;
+                if (endDate && item.tanggal > endDate) matchesDateRange = false;
+
+                return matchesKeyword && matchesDateRange;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px; color:#94a3b8;">Tidak ada data dokumen yang sesuai dengan pencarian.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(item => `
+                <tr>
+                    <td style="font-weight:700; color:#1e293b;">${item.noSurat || '-'}</td>
+                    <td><span class="badge-date">${window.formatTanggalIndo(item.tanggal)}</span></td>
+                    <td>${item.nama}</td>
+                    <td>${item.tempat}</td>
+                    <td>${item.keperluan}</td>
+                    <td style="font-size:11px; color:#64748b;">${item.timestampFormatted || '-'}</td>
+                    <td style="text-align: center;">
+                        <div style="display:flex; gap:4px; justify-content:center;">
+                            <button class="btn-db-load" onclick="loadFromFirestore('${item.id}')">Muat</button>
+                            <button class="btn-db-del" onclick="deleteFromFirestore('${item.id}')">Hapus</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        };
+    </script>
+
+    <!-- SCRIPT LOGIKA FORM & EDITABLE INTERFACE -->
+    <script>
+        let isSyncing = false;
+        let isBerangkatManuallyEdited = false;
+        let isKembaliManuallyEdited = false;
+
+        function switchTab(docId, evt) {
+            document.querySelectorAll('.document-view').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-tab-btn').forEach(el => el.classList.remove('active'));
+
+            document.getElementById(docId).classList.add('active');
+            evt.currentTarget.classList.add('active');
+        }
+
+        function formatTanggalIndo(dateString) {
+            if (!dateString) return "";
+            const bulanIndo = [
+                "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+                "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+            ];
+            const parts = dateString.split('-');
+            if (parts.length !== 3) return dateString;
+            
+            const tgl = parseInt(parts[2], 10);
+            const bln = parseInt(parts[1], 10) - 1;
+            const thn = parts[0];
+            
+            return `${tgl} ${bulanIndo[bln]} ${thn}`;
+        }
+
+        function formatRupiah(angka) {
+            let numberString = angka.toString().replace(/[^,\d]/g, '');
+            let split = numberString.split(',');
+            let sisa = split[0].length % 3;
+            let rupiah = split[0].substr(0, sisa);
+            let ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+            if (ribuan) {
+                let separator = sisa ? '.' : '';
+                rupiah += separator + ribuan.join('.');
+            }
+            return split[1] !== undefined ? rupiah + ',' + split[1] : rupiah;
+        }
+
+        function onTempatChangeFromInline() {
+            const tempat = document.getElementById('prev-tempat').innerText;
+            document.getElementById('prev-tiba-di').innerText = tempat;
+            document.getElementById('prev-kembali-dari').innerText = tempat;
+            document.getElementById('out-lap-tiba-di').innerText = tempat;
+            syncFromInline();
+        }
+
+        function onBbmNominalInlineEdit(e) {
+            if (isSyncing) return;
+            isSyncing = true;
+
+            const target = e.target;
+            const selection = window.getSelection();
+            
+            let originalText = target.innerText;
+            let cleanDigits = originalText.replace(/[^0-9]/g, '');
+            if (cleanDigits === '') cleanDigits = '0';
+
+            let formatted = formatRupiah(cleanDigits);
+
+            target.innerText = formatted;
+            document.getElementById('out-bbm-nominal-2').innerText = formatted;
+            document.getElementById('out-bbm-nominal-sum').innerText = formatted;
+
+            try {
+                let range = document.createRange();
+                range.selectNodeContents(target);
+                range.collapse(false);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            } catch (err) {}
+
+            isSyncing = false;
+        }
+
+        function onMainDateChangeFromInline() {
+            const mainDate = document.getElementById('prev-tanggal-surat-picker').value;
+
+            if (!isBerangkatManuallyEdited) {
+                document.getElementById('prev-tgl-berangkat-picker').value = mainDate;
+            }
+            if (!isKembaliManuallyEdited) {
+                document.getElementById('prev-tgl-kembali-picker').value = mainDate;
+            }
+
+            syncFromInline();
+        }
+
+        function onBerangkatChangeFromInline() {
+            isBerangkatManuallyEdited = true;
+            syncFromInline();
+        }
+
+        function onKembaliChangeFromInline() {
+            isKembaliManuallyEdited = true;
+            syncFromInline();
+        }
+
+        /* --- LOGIKA EDIT/TAMBAH/HAPUS POIN LAPORAN HASIL PERJALANAN --- */
+        function reindexReportPoints() {
+            const rows = document.querySelectorAll('.lap-row');
+            rows.forEach((row, index) => {
+                const numCell = row.querySelector('.lap-num');
+                if (numCell) {
+                    numCell.innerText = `${index + 1}.`;
+                }
+            });
+        }
+
+        function addReportPoint(text = 'Hasil/kegiatan perjalanan dinas baru') {
+            const addRow = document.getElementById('lap-add-row');
+            const newRow = document.createElement('tr');
+            newRow.className = 'lap-row';
+            newRow.style.height = '30px';
+
+            newRow.innerHTML = `
+                <td></td>
+                <td class="lap-num" style="text-align:center;"></td>
+                <td colspan="8" style="white-space:normal;">
+                    <span class="lap-text" contenteditable="true">${text}</span>
+                    <button class="btn-del-point" onclick="removeReportPoint(this)" title="Hapus poin ini">✕</button>
+                </td>
+            `;
+
+            addRow.parentNode.insertBefore(newRow, addRow);
+            reindexReportPoints();
+        }
+
+        function removeReportPoint(btn) {
+            const rows = document.querySelectorAll('.lap-row');
+            if (rows.length <= 1) {
+                alert('Dokumen minimal harus memiliki 1 poin hasil perjalanan!');
+                return;
+            }
+            const row = btn.closest('.lap-row');
+            if (row) {
+                row.remove();
+                reindexReportPoints();
+            }
+        }
+
+        function renderReportPoints(pointsArray) {
+            document.querySelectorAll('.lap-row').forEach(row => row.remove());
+            pointsArray.forEach(pointText => {
+                addReportPoint(pointText);
+            });
+        }
+
+        function syncFromInline() {
+            if (isSyncing) return;
+            isSyncing = true;
+
+            const noSurat = document.getElementById('prev-no-surat').innerText;
+            const dasar = document.getElementById('prev-dasar').innerText;
+            const noDasar = document.getElementById('prev-no-dasar').innerText;
+            const tanggalIso = document.getElementById('prev-tanggal-surat-picker').value;
+            const tanggalFormatted = formatTanggalIndo(tanggalIso);
+            const tentang = document.getElementById('prev-tentang').innerText;
+            const nama = document.getElementById('prev-person-1').innerText;
+            const tugas = document.getElementById('prev-tugas').innerText;
+            const tempat = document.getElementById('prev-tempat').innerText;
+            const transport = document.getElementById('prev-transport').innerText;
+
+            const tglBerangkatIso = document.getElementById('prev-tgl-berangkat-picker').value;
+            const tglKembaliIso = document.getElementById('prev-tgl-kembali-picker').value;
+            const tglBerangkatFormatted = formatTanggalIndo(tglBerangkatIso);
+            const tglKembaliFormatted = formatTanggalIndo(tglKembaliIso);
+
+            document.getElementById('prev-asman-tgl').innerText = tanggalFormatted;
+            document.getElementById('prev-nama-ketua').innerText = nama.toUpperCase();
+            document.getElementById('prev-tiba-di').innerText = tempat;
+            document.getElementById('prev-tgl-tiba').innerText = tglBerangkatFormatted;
+            document.getElementById('prev-kembali-dari').innerText = tempat;
+            document.getElementById('prev-tgl-tiba-kembali').innerText = tglKembaliFormatted;
+
+            document.getElementById('out-lap-nama').innerText = nama;
+            document.getElementById('out-lap-tgl').innerText = tanggalFormatted;
+            document.getElementById('out-lap-tujuan').innerText = tempat;
+            document.getElementById('out-lap-keperluan').innerText = tugas;
+            document.getElementById('out-lap-tiba-di').innerText = tempat;
+            document.getElementById('out-lap-nama-ttd').innerText = nama;
+            
+            document.getElementById('out-bbm-nomor').innerText = "Nomor : " + noSurat;
+            document.getElementById('out-bbm-tgl').innerText = tanggalFormatted;
+            document.getElementById('out-bbm-nama-ketua').innerText = nama.toUpperCase();
+            document.getElementById('out-bbm-nama-penerima').innerText = nama;
+
+            isSyncing = false;
+        }
+
+        function openDatabaseModal() {
+            document.getElementById('db-modal').classList.add('active');
+            if (window.filterModalDatabase) window.filterModalDatabase();
+        }
+
+        function closeDatabaseModal() {
+            document.getElementById('db-modal').classList.remove('active');
+        }
+
+        function resetModalFilters() {
+            document.getElementById('filter-keyword').value = '';
+            document.getElementById('filter-start-date').value = '';
+            document.getElementById('filter-end-date').value = '';
+            if (window.filterModalDatabase) window.filterModalDatabase();
+        }
+
+        function printActiveDocument() {
+            document.body.classList.remove('print-all');
+            document.body.classList.add('print-single');
+            window.print();
+        }
+
+        function printAllDocuments() {
+            document.body.classList.remove('print-single');
+            document.body.classList.add('print-all');
+            window.print();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            syncFromInline();
+            reindexReportPoints();
+        });
+    </script>
+</body>
+</html>
